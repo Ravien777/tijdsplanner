@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tijdsplanner — Krijg grip op je tijd</title>
+<meta name="description" content="Tijdsplanner helpt je om taken, afspraken en verplichtingen overzichtelijk te plannen. Van een volle, chaotische agenda naar een planning die je daadwerkelijk volgt.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231B2436%22/><line x1=%2222%22 y1=%2234%22 x2=%2278%22 y2=%2234%22 stroke=%22%23C97F27%22 stroke-width=%226%22 stroke-linecap=%22round%22/><line x1=%2222%22 y1=%2252%22 x2=%2260%22 y2=%2252%22 stroke=%22%23F1F2ED%22 stroke-width=%226%22 stroke-linecap=%22round%22/><line x1=%2222%22 y1=%2270%22 x2=%2268%22 y2=%2270%22 stroke=%22%233E6B5E%22 stroke-width=%226%22 stroke-linecap=%22round%22/></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#1B2436;
+    --ink-soft:#4A5266;
+    --paper:#F2F2EC;
+    --paper-raised:#EAEAE1;
+    --dark:#161F2C;
+    --dark-2:#1E2A3B;
+    --cream:#F4F3ED;
+    --amber:#C97F27;
+    --amber-deep:#A8681C;
+    --teal:#3E6B5E;
+    --line-light:#D9D8CC;
+    --line-dark:rgba(244,243,237,0.14);
+    --serif:'Spectral', Georgia, serif;
+    --sans:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono:'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+    --max: 40rem;
+    --maxw: 72rem;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{max-width:100%;display:block;}
+  a{color:inherit;}
+  h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0;letter-spacing:-0.01em;}
+  p{margin:0;}
+  button{font-family:inherit;cursor:pointer;}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 1.75rem;}
+  .col{max-width:var(--max);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+  }
+
+  :focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+
+  /* ---------- NAV ---------- */
+  header.site{
+    position:sticky; top:0; z-index:40;
+    background:rgba(242,242,236,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line-light);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.1rem 1.75rem;
+    max-width:var(--maxw); margin:0 auto;
+  }
+  .wordmark{
+    font-family:var(--serif); font-weight:600; font-size:1.15rem;
+    display:flex; align-items:center; gap:0.55rem;
+    text-decoration:none; color:var(--ink);
+  }
+  .wordmark .dot{width:9px;height:9px;border-radius:50%;background:var(--amber);display:inline-block;}
+  .btn{
+    display:inline-flex; align-items:center; gap:0.5rem;
+    padding:0.72rem 1.4rem;
+    border-radius:3px;
+    font-size:0.95rem; font-weight:500;
+    text-decoration:none; border:1px solid transparent;
+    transition:transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn-primary{background:var(--amber-deep); color:#fff;}
+  .btn-primary:hover{background:#8A5416;}
+  .btn-ghost-dark{border-color:var(--ink); color:var(--ink);}
+  .btn-ghost-dark:hover{background:var(--ink); color:var(--paper);}
+  .btn-ghost-light{border-color:rgba(244,243,237,0.4); color:var(--cream);}
+  .btn-ghost-light:hover{background:rgba(244,243,237,0.12);}
+  .nav .btn{padding:0.6rem 1.1rem; font-size:0.88rem;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:radial-gradient(120% 140% at 15% 0%, #202D40 0%, var(--dark) 55%, var(--dark) 100%);
+    color:var(--cream);
+    padding:4.5rem 0 5rem;
+    overflow:hidden;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns: 1.05fr 0.95fr; gap:3.5rem; align-items:center;
+    max-width:var(--maxw); margin:0 auto; padding:0 1.75rem;
+  }
+  .eyebrow-line{
+    display:flex; align-items:center; gap:0.6rem;
+    font-family:var(--mono); font-size:0.78rem; color:var(--amber);
+    margin-bottom:1.5rem;
+  }
+  .eyebrow-line .rule{width:28px; height:1px; background:var(--amber);}
+  h1.hero-head{
+    font-size:clamp(2.4rem, 4.6vw, 3.6rem);
+    line-height:1.06;
+    font-weight:600;
+    color:#fff;
+    max-width:11ch;
+  }
+  .hero-sub{
+    margin-top:1.5rem;
+    font-size:1.1rem;
+    color:#C7CCD8;
+    max-width:34ch;
+    line-height:1.65;
+  }
+  .hero-ctas{margin-top:2.2rem; display:flex; gap:0.9rem; flex-wrap:wrap;}
+  .hero-note{margin-top:1.4rem; font-size:0.85rem; color:#8791A3;}
+
+  /* schedule visual */
+  .schedule-visual{position:relative; height:420px;}
+  .sv-frame{
+    position:relative; height:100%;
+    border:1px solid rgba(244,243,237,0.14);
+    border-radius:6px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+    padding:1.4rem 0 1.4rem 3.6rem;
+    overflow:hidden;
+  }
+  .sv-hours{
+    position:absolute; left:1.1rem; top:1.4rem; bottom:1.4rem;
+    display:flex; flex-direction:column; justify-content:space-between;
+    font-family:var(--mono); font-size:0.72rem; color:#6C7688;
+  }
+  .sv-rule{
+    position:absolute; left:3.6rem; right:1.2rem; top:0; bottom:0;
+  }
+  .sv-rule span{
+    position:absolute; left:0; right:0; height:1px; background:rgba(244,243,237,0.07);
+  }
+  .sv-track{position:relative; height:100%;}
+  .sv-block{
+    position:absolute; left:0; right:1.2rem;
+    border-radius:4px;
+    font-family:var(--mono); font-size:0.74rem;
+    padding:0.5rem 0.7rem;
+    display:flex; flex-direction:column; justify-content:center;
+    color:#fff;
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  .sv-block .lbl{font-family:var(--sans); font-size:0.82rem; font-weight:500; margin-top:0.1rem;}
+  .sv-block.amber{background:linear-gradient(135deg,#B96F1F,#8F5416);}
+  .sv-block.teal{background:linear-gradient(135deg,#355A50,#254038);}
+  .sv-block.neutral{background:#2A3548; border-color:rgba(255,255,255,0.1);}
+
+  /* chaos state before settle */
+  .messy .sv-block{ animation: settle 1.1s cubic-bezier(.2,.7,.2,1) both; }
+  .sv-block:nth-child(1){animation-delay:.05s;}
+  .sv-block:nth-child(2){animation-delay:.15s;}
+  .sv-block:nth-child(3){animation-delay:.25s;}
+  .sv-block:nth-child(4){animation-delay:.35s;}
+  .sv-block:nth-child(5){animation-delay:.45s;}
+  @keyframes settle{
+    0%{ transform: translate(var(--fx,0px), var(--fy,0px)) rotate(var(--fr,0deg)); opacity:0; }
+    60%{ opacity:1; }
+    100%{ transform: translate(0,0) rotate(0deg); opacity:1; }
+  }
+
+  /* ---------- SECTION GENERIC ---------- */
+  section{padding:5.5rem 0;}
+  .section-head{max-width:36rem; margin-bottom:2.6rem;}
+  h2.head{font-size:clamp(1.7rem,3vw,2.3rem); font-weight:600;}
+  .lead{font-size:1.08rem; color:var(--ink-soft); margin-top:0.9rem; line-height:1.65;}
+
+  /* ---------- PROBLEEM ---------- */
+  .problem{background:var(--paper);}
+  .problem-list{
+    font-size:1.15rem; color:var(--ink-soft);
+    display:flex; flex-wrap:wrap; gap:0.5rem 0.9rem;
+    margin:1.6rem 0 1.8rem;
+    padding:0; list-style:none;
+    max-width:34rem;
+  }
+  .problem-list li{position:relative; padding-left:0; }
+  .problem-list li:not(:last-child)::after{content:"·"; margin-left:0.9rem; color:var(--line-light); font-weight:700;}
+  .pull{
+    font-family:var(--serif); font-style:italic; font-weight:500;
+    font-size:clamp(1.5rem,2.6vw,2rem);
+    line-height:1.35;
+    border-left:3px solid var(--amber);
+    padding-left:1.4rem;
+    margin-top:2rem;
+    max-width:30rem;
+  }
+
+  /* ---------- FEATURES ---------- */
+  .features{background:var(--paper);}
+  .feat-list{border-top:1px solid var(--line-light);}
+  .feat-row{
+    display:grid; grid-template-columns: 2.6rem 1fr 1.5fr;
+    gap:1.8rem;
+    padding:1.9rem 0;
+    border-bottom:1px solid var(--line-light);
+    align-items:start;
+  }
+  .feat-icon{
+    width:2.2rem; height:2.2rem; flex:none;
+  }
+  .feat-title{font-family:var(--serif); font-weight:600; font-size:1.18rem; padding-top:0.05rem;}
+  .feat-desc{color:var(--ink-soft); font-size:0.99rem; max-width:32rem;}
+
+  /* ---------- FRICTIE ---------- */
+  .frictie{
+    background:var(--dark-2);
+    color:var(--cream);
+  }
+  .frictie .wrap{max-width:var(--maxw);}
+  .frictie-grid{display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center;}
+  .frictie h2{font-size:clamp(1.6rem,2.8vw,2.1rem); color:#fff; max-width:14ch;}
+  .frictie p{color:#B7BECC; margin-top:1.1rem; font-size:1.02rem; line-height:1.7;}
+  .frictie-emph{
+    font-family:var(--serif); font-style:italic; color:#fff;
+    font-size:1.3rem; margin-top:1.4rem; line-height:1.5;
+  }
+  .frictie-note{
+    border:1px solid rgba(244,243,237,0.15);
+    border-radius:6px; padding:1.6rem 1.7rem;
+    font-family:var(--mono); font-size:0.86rem; color:#9AA3B4;
+    line-height:1.8;
+  }
+  .frictie-note b{color:var(--amber); font-weight:500;}
+
+  /* ---------- HOE HET WERKT ---------- */
+  .how{background:var(--paper);}
+  .how-timeline{border-top:1px solid var(--line-light); margin-top:0.5rem;}
+  .how-step{
+    display:grid; grid-template-columns:5.5rem 1fr;
+    gap:1.6rem;
+    padding:2.1rem 0;
+    border-bottom:1px solid var(--line-light);
+    position:relative;
+  }
+  .how-num{
+    font-family:var(--mono); font-size:0.9rem; color:var(--amber);
+    padding-top:0.15rem;
+  }
+  .how-step h3{font-family:var(--serif); font-weight:600; font-size:1.22rem;}
+  .how-step p{color:var(--ink-soft); margin-top:0.5rem; font-size:0.99rem; max-width:34rem;}
+
+  /* ---------- VOOR WIE ---------- */
+  .audience{background:var(--paper);}
+  .aud-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:0;}
+  .aud-item{
+    padding:1.8rem 1.9rem;
+    border-top:1px solid var(--line-light);
+    border-left:1px solid var(--line-light);
+  }
+  .aud-item:nth-child(odd){border-left:none;}
+  .aud-item:nth-child(-n+2){border-top:none;}
+  .aud-tag{font-family:var(--mono); font-size:0.74rem; color:var(--teal); letter-spacing:0.02em;}
+  .aud-item h3{font-family:var(--serif); font-weight:600; font-size:1.12rem; margin-top:0.6rem;}
+  .aud-item p{color:var(--ink-soft); font-size:0.95rem; margin-top:0.55rem; line-height:1.6;}
+
+  /* ---------- REALISTISCH ---------- */
+  .realistic{background:var(--cream); border-top:1px solid var(--line-light); border-bottom:1px solid var(--line-light);}
+  .chips{display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.8rem;}
+  .chip{
+    font-family:var(--mono); font-size:0.78rem;
+    border:1px solid var(--line-light);
+    padding:0.4rem 0.75rem; border-radius:3px;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- ONE-LINE STATEMENT ---------- */
+  .statement{background:var(--paper); text-align:left;}
+  .statement-words{
+    display:flex; flex-wrap:wrap; align-items:baseline; gap:0.5rem 0.9rem;
+    font-family:var(--serif); font-weight:600;
+    font-size:clamp(1.5rem,3.4vw,2.4rem);
+  }
+  .statement-words span{white-space:nowrap;}
+  .statement-words .sep{color:var(--line-light); font-weight:400;}
+  .statement-words .accent{color:var(--amber);}
+  .statement-words .accent2{color:var(--teal);}
+
+  /* ---------- FAQ ---------- */
+  .faq{background:var(--paper);}
+  .faq-list{border-top:1px solid var(--line-light);}
+  .faq-item{border-bottom:1px solid var(--line-light);}
+  .faq-q{
+    width:100%; text-align:left; background:none; border:none;
+    padding:1.35rem 0; display:flex; justify-content:space-between; align-items:center;
+    gap:1rem; color:var(--ink); font-size:1.02rem; font-weight:500;
+    font-family:var(--sans);
+  }
+  .faq-q .plus{font-family:var(--mono); font-size:1.1rem; color:var(--amber); transition:transform .2s ease; flex:none;}
+  .faq-item[open] .plus{transform:rotate(45deg);}
+  .faq-a{padding:0 0 1.5rem; color:var(--ink-soft); font-size:0.97rem; max-width:34rem; line-height:1.65;}
+  .faq-item summary{list-style:none; cursor:pointer;}
+  .faq-item summary::-webkit-details-marker{display:none;}
+
+  /* ---------- FINAL CTA / FOOTER ---------- */
+  .closing{
+    background:radial-gradient(120% 140% at 85% 100%, #202D40 0%, var(--dark) 55%, var(--dark) 100%);
+    color:var(--cream);
+    padding:5.5rem 0 3rem;
+  }
+  .closing-top{display:grid; grid-template-columns:1.1fr 0.9fr; gap:3rem; align-items:start;}
+  .closing h2{color:#fff; font-size:clamp(1.8rem,3.2vw,2.5rem); max-width:14ch;}
+  .closing p.big{color:#B7BECC; margin-top:1.2rem; font-size:1.05rem; max-width:32ch; line-height:1.65;}
+
+  form.access{
+    border:1px solid rgba(244,243,237,0.16);
+    border-radius:8px;
+    padding:1.9rem;
+    background:rgba(255,255,255,0.02);
+  }
+  form.access .fld{margin-bottom:1rem;}
+  form.access label{display:block; font-family:var(--mono); font-size:0.74rem; color:#8791A3; margin-bottom:0.4rem;}
+  form.access input, form.access textarea{
+    width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(244,243,237,0.18);
+    border-radius:4px; padding:0.7rem 0.8rem; color:#fff; font-family:var(--sans); font-size:0.95rem;
+  }
+  form.access input::placeholder, form.access textarea::placeholder{color:#5C6478;}
+  form.access textarea{resize:vertical; min-height:4.5rem;}
+  form.access .btn{width:100%; justify-content:center; margin-top:0.3rem;}
+  .form-msg{font-size:0.86rem; color:var(--teal); margin-top:0.9rem; display:none;}
+  .form-msg.show{display:block;}
+
+  footer.site{
+    border-top:1px solid rgba(244,243,237,0.12);
+    margin-top:4rem; padding-top:2rem;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+    font-size:0.85rem; color:#6C7688;
+  }
+  footer.site .wordmark{color:#B7BECC;}
+  footer.site .wordmark .dot{background:var(--amber);}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 860px){
+    .hero-grid, .frictie-grid, .closing-top{grid-template-columns:1fr;}
+    .schedule-visual{height:300px; margin-top:1rem;}
+    .aud-grid{grid-template-columns:1fr;}
+    .aud-item{border-left:none !important; border-top:1px solid var(--line-light) !important;}
+    .aud-item:first-child{border-top:none !important;}
+    .feat-row{grid-template-columns:2.2rem 1fr; }
+    .feat-row .feat-desc{grid-column:1 / -1; padding-left:0;}
+    .how-step{grid-template-columns:3.5rem 1fr;}
+  }
+  @media (max-width: 560px){
+    body{font-size:16px;}
+    section{padding:3.6rem 0;}
+    .nav{padding:0.9rem 1.25rem;}
+    .wrap{padding:0 1.25rem;}
+    .hero{padding:2.8rem 0 3rem;}
+    .hero-grid{padding:0 1.25rem; gap:2.4rem;}
+    h1.hero-head{max-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <a href="#top" class="wordmark"><span class="dot"></span>Tijdsplanner</a>
+    <a href="#toegang" class="btn btn-ghost-dark">Vraag toegang aan</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" style="padding-top:3.5rem;">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow-line"><span class="rule"></span>Planning app · op aanvraag</div>
+        <h1 class="hero-head">Krijg grip<br>op je tijd</h1>
+        <p class="hero-sub">Van een volle, chaotische agenda naar een planning die je daadwerkelijk volgt. Tijdsplanner laat je niet alleen zien wat je moet doen, maar ook wanneer je het kunt doen.</p>
+        <div class="hero-ctas">
+          <a href="#toegang" class="btn btn-primary">Vraag toegang aan</a>
+          <a href="#hoe-het-werkt" class="btn btn-ghost-light">Zo werkt het</a>
+        </div>
+        <p class="hero-note">Momenteel in beperkte, uitnodiging-gebaseerde toegang.</p>
+      </div>
+
+      <div class="schedule-visual">
+        <div class="sv-frame">
+          <div class="sv-hours">
+            <span>08:00</span><span>11:00</span><span>14:00</span><span>17:00</span><span>20:00</span>
+          </div>
+          <div class="sv-rule" aria-hidden="true">
+            <span style="top:0%"></span><span style="top:25%"></span><span style="top:50%"></span><span style="top:75%"></span><span style="top:100%"></span>
+          </div>
+          <div class="sv-track messy">
+            <div class="sv-block amber" style="top:4%; height:15%; --fx:-40px; --fy:-14px; --fr:-6deg;">
+              <span>08:30 — 10:00</span><span class="lbl">Diepe werk-blok</span>
+            </div>
+            <div class="sv-block neutral" style="top:23%; height:11%; --fx:34px; --fy:10px; --fr:4deg;">
+              <span>10:15 — 11:15</span><span class="lbl">Teamoverleg</span>
+            </div>
+            <div class="sv-block teal" style="top:38%; height:13%; --fx:-24px; --fy:18px; --fr:-3deg;">
+              <span>11:30 — 13:00</span><span class="lbl">Beschikbaar</span>
+            </div>
+            <div class="sv-block amber" style="top:55%; height:15%; --fx:30px; --fy:-16px; --fr:5deg;">
+              <span>14:00 — 15:30</span><span class="lbl">Rapport afronden</span>
+            </div>
+            <div class="sv-block neutral" style="top:74%; height:12%; --fx:-32px; --fy:12px; --fr:-4deg;">
+              <span>16:00 — 17:00</span><span class="lbl">Bijbetalen &amp; mail</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEEM -->
+  <section class="problem">
+    <div class="wrap col">
+      <h2 class="head">Heb je het gevoel dat je altijd achterloopt?</h2>
+      <p class="lead">Je hebt genoeg te doen.</p>
+      <ul class="problem-list">
+        <li>Werk</li><li>Studie</li><li>Afspraken</li><li>Administratie</li><li>Sport</li><li>Privézaken</li>
+      </ul>
+      <p class="lead">Je agenda staat vol, je takenlijst wordt steeds langer, en toch heb je aan het einde van de dag het gevoel dat je niet genoeg hebt gedaan. Het probleem is meestal niet dat je te weinig tijd hebt.</p>
+      <p class="pull">Het probleem is dat je planning niet aansluit op de werkelijkheid.</p>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="head">Van chaos naar een planning die je kunt volgen</h2>
+        <p class="lead">In plaats van zelf eindeloos te puzzelen met taken, afspraken en beschikbare tijd, helpt Tijdsplanner je om alles overzichtelijk in te delen.</p>
+      </div>
+
+      <div class="feat-list">
+        <div class="feat-row">
+          <svg class="feat-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.4" stroke="#1B2436" stroke-width="1.4"/><path d="M12 7.5v5l3.4 2" stroke="#C97F27" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <div class="feat-title">Breng alles samen</div>
+          <div class="feat-desc">Krijg overzicht over je taken, afspraken en andere verplichtingen. Geen losse lijstjes en vergeten taken meer.</div>
+        </div>
+        <div class="feat-row">
+          <svg class="feat-icon" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="1.6" stroke="#1B2436" stroke-width="1.4"/><path d="M4 9.5h16" stroke="#1B2436" stroke-width="1.4"/><path d="M8 12.5h3M8 15.5h5" stroke="#C97F27" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <div class="feat-title">Plan je tijd</div>
+          <div class="feat-desc">Geef je planning structuur door taken op realistische momenten in te delen — passend bij de tijd die je écht hebt.</div>
+        </div>
+        <div class="feat-row">
+          <svg class="feat-icon" viewBox="0 0 24 24" fill="none"><path d="M5 12a7 7 0 0 1 12-4.9M5 7v4h4" stroke="#1B2436" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 12a7 7 0 0 1-12 4.9M19 17v-4h-4" stroke="#C97F27" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="feat-title">Synchroniseer met je agenda</div>
+          <div class="feat-desc">Je planning houdt rekening met je bestaande agenda, zodat je ziet hoeveel tijd je daadwerkelijk beschikbaar hebt.</div>
+        </div>
+        <div class="feat-row">
+          <svg class="feat-icon" viewBox="0 0 24 24" fill="none"><path d="M5 13l4.5 4.5L19 8" stroke="#3E6B5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="feat-title">Weet wat je moet doen</div>
+          <div class="feat-desc">Open je planning en zie in één oogopslag wat er op dat moment van je wordt verwacht.</div>
+        </div>
+        <div class="feat-row">
+          <svg class="feat-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" fill="#C97F27"/><circle cx="12" cy="12" r="8.2" stroke="#1B2436" stroke-width="1.4"/></svg>
+          <div class="feat-title">Werk met focus</div>
+          <div class="feat-desc">Minder nadenken over wat je nu moet doen. Meer tijd besteden aan het daadwerkelijk uitvoeren van je planning.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FRICTIE -->
+  <section class="frictie">
+    <div class="wrap">
+      <div class="frictie-grid">
+        <div>
+          <h2>Een planning maken is makkelijk. Volgen is moeilijker.</h2>
+          <p>Veel agenda- en planning-apps geven je een plek om taken en afspraken op te slaan. Maar daarmee is je dag nog niet automatisch georganiseerd. Je kunt tientallen taken in een lijst zetten zonder te weten hoe je alles binnen je beschikbare tijd uitvoert.</p>
+          <p class="frictie-emph">Tijdsplanner draait niet om taken opschrijven — het draait om een realistische tijdsplanning.</p>
+        </div>
+        <div class="frictie-note">
+          <b>Takenlijst</b> vertelt je wát er moet gebeuren.<br><br>
+          <b>Tijdsplanner</b> vertelt je wannéér je het gaat doen.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOE HET WERKT -->
+  <section class="how" id="hoe-het-werkt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="head">Zo werkt Tijdsplanner</h2>
+      </div>
+      <div class="how-timeline">
+        <div class="how-step">
+          <div class="how-num">01</div>
+          <div>
+            <h3>Verzamel wat je moet doen</h3>
+            <p>Zet je taken, afspraken en verplichtingen overzichtelijk bij elkaar, op één plek.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">02</div>
+          <div>
+            <h3>Bekijk je beschikbare tijd</h3>
+            <p>Tijdsplanner werkt samen met je agenda, zodat je rekening houdt met afspraken die al vaststaan.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">03</div>
+          <div>
+            <h3>Maak een realistische planning</h3>
+            <p>Je planning wordt ingedeeld rond de tijd die je daadwerkelijk beschikbaar hebt — niet meer.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">04</div>
+          <div>
+            <h3>Volg je planning</h3>
+            <p>In plaats van iedere ochtend opnieuw te bedenken wat je moet doen, heb je een duidelijk plan voor je dag.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">05</div>
+          <div>
+            <h3>Pas aan wanneer je dag anders loopt</h3>
+            <p>Niet iedere dag loopt precies zoals gepland. Een goede planning beweegt mee wanneer er iets verandert.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOOR WIE -->
+  <section class="audience">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="head">Voor wie is Tijdsplanner?</h2>
+        <p class="lead">Gemaakt voor mensen die veel te doen hebben en behoefte hebben aan meer structuur.</p>
+      </div>
+      <div class="aud-grid">
+        <div class="aud-item">
+          <div class="aud-tag">Drukke professionals</div>
+          <h3>Werk, vergaderingen, deadlines</h3>
+          <p>Persoonlijke verplichtingen kunnen zich snel opstapelen. Met een duidelijke dagplanning houd je overzicht over wat er nog moet gebeuren.</p>
+        </div>
+        <div class="aud-item">
+          <div class="aud-tag">Ondernemers &amp; freelancers</div>
+          <h3>Zelf verantwoordelijk voor je tijd</h3>
+          <p>Werk, administratie, klanten en privéleven goed combineren is lastig. Tijdsplanner helpt je je beschikbare uren bewust in te delen.</p>
+        </div>
+        <div class="aud-item">
+          <div class="aud-tag">Studenten</div>
+          <h3>Colleges, opdrachten, examens</h3>
+          <p>Bijbanen en sociale afspraken vragen allemaal om tijd. Een overzichtelijke planning voorkomt dat alles op het laatste moment moet gebeuren.</p>
+        </div>
+        <div class="aud-item">
+          <div class="aud-tag">Iedereen met een volle agenda</div>
+          <h3>"Zoveel te doen, waar begin ik?"</h3>
+          <p>Je hoeft geen ondernemer of student te zijn. Als je dit vaak denkt, kan een gestructureerde planning helpen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REALISTISCH -->
+  <section class="realistic">
+    <div class="wrap col">
+      <h2 class="head">Een planning die rekening houdt met je echte leven</h2>
+      <p class="lead" style="margin-top:1.4rem;">Een planning ziet er op papier vaak perfect uit. Tot:</p>
+      <div class="chips" style="margin-top:1.2rem;">
+        <span class="chip">een vergadering uitloopt</span>
+        <span class="chip">een taak langer duurt dan verwacht</span>
+        <span class="chip">er een afspraak tussendoor komt</span>
+        <span class="chip">je minder energie hebt dan gedacht</span>
+      </div>
+      <p class="lead">Daarom is Tijdsplanner gericht op realistisch plannen, niet op het vullen van iedere minuut van je dag. Het doel is niet om zoveel mogelijk taken in één dag te proppen.</p>
+      <p class="pull" style="border-color:var(--teal);">Het doel is om duidelijkheid te krijgen over wat haalbaar is.</p>
+    </div>
+  </section>
+
+  <!-- STATEMENT -->
+  <section class="statement">
+    <div class="wrap">
+      <p style="color:var(--ink-soft); max-width:32rem; margin-bottom:1.4rem;">Van je eerste taak in de ochtend tot je laatste afspraak van de dag — één overzicht, zodat je minder hoeft te schakelen tussen apps, lijstjes en agenda's.</p>
+      <div class="statement-words">
+        <span class="accent">Taken.</span><span class="sep">/</span>
+        <span>Afspraken.</span><span class="sep">/</span>
+        <span class="accent2">Beschikbare tijd.</span><span class="sep">=</span>
+        <span>Eén duidelijk plan.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="wrap col">
+      <h2 class="head" style="margin-bottom:2rem;">Veelgestelde vragen</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-q">Wat is Tijdsplanner?<span class="plus">+</span></summary>
+          <div class="faq-a">Tijdsplanner is een planning-app waarmee je taken, afspraken en beschikbare tijd organiseert in een overzichtelijke planning.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Wat is het verschil met een gewone agenda?<span class="plus">+</span></summary>
+          <div class="faq-a">Een agenda houdt vooral afspraken en gebeurtenissen bij. Tijdsplanner richt zich daarnaast op het daadwerkelijk indelen van je beschikbare tijd, zodat je weet wanneer je taken kunt uitvoeren.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Kan Tijdsplanner synchroniseren met mijn agenda?<span class="plus">+</span></summary>
+          <div class="faq-a">Ja. Tijdsplanner is ontworpen om met je bestaande agenda samen te werken, zodat je planning rekening houdt met afspraken die al gepland staan.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Is Tijdsplanner geschikt voor een drukke agenda?<span class="plus">+</span></summary>
+          <div class="faq-a">Ja, juist. Tijdsplanner is bedoeld voor mensen die meerdere taken, afspraken en verplichtingen moeten combineren en behoefte hebben aan meer overzicht.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Is Tijdsplanner geschikt voor ondernemers?<span class="plus">+</span></summary>
+          <div class="faq-a">Ja. Ondernemers en freelancers gebruiken Tijdsplanner om werk, klanten, administratie en andere verplichtingen overzichtelijk in te plannen.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Kan ik Tijdsplanner gratis gebruiken?<span class="plus">+</span></summary>
+          <div class="faq-a">Tijdsplanner is momenteel op aanvraag beschikbaar. Neem contact met ons op om toegang te bespreken.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Hoe krijg ik toegang?<span class="plus">+</span></summary>
+          <div class="faq-a">Vul het formulier hieronder in. We nemen contact met je op en vertellen je hoe je kunt starten.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING / ACCESS -->
+  <section class="closing" id="toegang">
+    <div class="wrap">
+      <div class="closing-top">
+        <div>
+          <h2>Klaar om meer structuur in je dag te krijgen?</h2>
+          <p class="big">Je hebt iedere dag dezelfde 24 uur. Het verschil zit in hoe je ze gebruikt. Laat je gegevens achter — we nemen contact met je op.</p>
+        </div>
+
+        <form class="access" id="access-form">
+          <div class="fld">
+            <label for="naam">Naam</label>
+            <input id="naam" name="naam" type="text" placeholder="Je naam" required>
+          </div>
+          <div class="fld">
+            <label for="email">E-mailadres</label>
+            <input id="email" name="email" type="email" placeholder="jij@voorbeeld.nl" required>
+          </div>
+          <div class="fld">
+            <label for="toelichting">Toelichting (optioneel)</label>
+            <textarea id="toelichting" name="toelichting" placeholder="Waar loop je op dit moment tegenaan?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Vraag toegang aan</button>
+          <p class="form-msg" id="form-msg">Bedankt! Je aanvraag is klaargezet in je e-mailprogramma — verstuur de e-mail om je aanvraag af te ronden.</p>
+        </form>
+      </div>
+
+      <footer class="site">
+        <a href="#top" class="wordmark"><span class="dot"></span>Tijdsplanner</a>
+        <span>tijdsplanner.nl · © 2026</span>
+      </footer>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Access form: opens a prefilled mailto (no backend on static hosting).
+  // Replace RECEIVER_EMAIL with the real inbox that should receive requests,
+  // or swap this handler for a real form backend (e.g. Formspree, Netlify Forms).
+  var RECEIVER_EMAIL = "hallo@tijdsplanner.nl";
+
+  document.getElementById('access-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var naam = document.getElementById('naam').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var toelichting = document.getElementById('toelichting').value.trim();
+
+    var subject = encodeURIComponent("Aanvraag toegang Tijdsplanner — " + naam);
+    var body = encodeURIComponent(
+      "Naam: " + naam + "\n" +
+      "E-mailadres: " + email + "\n\n" +
+      "Toelichting:\n" + (toelichting || "—")
+    );
+    window.location.href = "mailto:" + RECEIVER_EMAIL + "?subject=" + subject + "&body=" + body;
+
+    var msg = document.getElementById('form-msg');
+    msg.classList.add('show');
+  });
+</script>
+
+</body>
+</html>
